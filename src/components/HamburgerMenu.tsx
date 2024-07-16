@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 const HamburgerMenu = () => {
     const [isMenuOpen , setIsMenuOpen] = useState(false);
   return (
-    <div>
+    <div className='md:hidden'>
       <div className='flex flex-col gap-1 cursor-pointer' onClick={()=>{setIsMenuOpen((prev)=> !prev)}}>
         <div className={`w-8 h-1 rounded-md bg-blue-500 transition-transform duration-300 ease-in-out transform ${isMenuOpen ? 'rotate-45 translate-y-1' : ''} origin-left`} />
         <div className={`w-8 h-1 rounded-md bg-blue-500 transition-opacity duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : ''}`} />
