@@ -6,7 +6,7 @@ import LoadingSpinner from './LoadingSpinner'
 
 const Navbar = () => {
   return (
-    <div className='h-24 flex justify-between items-center'>
+    <div className='h-24 flex justify-between items-center px-1'>
       <div className='md:hidden lg:block w-[20%]'>
         <Link href={'/'} className='font-extrabold text-blue-500 text-xl'>My App</Link>
       </div>
@@ -37,7 +37,8 @@ const Navbar = () => {
         </ClerkLoading>
         <ClerkLoaded>
           <SignedIn>
-            <div className='cursor-pointer'>
+           <div className='hidden md:flex gap-4'>
+           <div className='cursor-pointer'>
               <Image src={'/people.png'} alt='' width={20} height={20} />
             </div>
             <div className='cursor-pointer'>
@@ -46,6 +47,7 @@ const Navbar = () => {
             <div className='cursor-pointer'>
               <Image src={'/notifications.png'} alt='' width={20} height={20} />
             </div>
+           </div>
             <UserButton />
           </SignedIn>
           <SignedOut>

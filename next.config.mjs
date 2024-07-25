@@ -4,6 +4,9 @@ const nextConfig = {
     reactCompiler: true,
     ppr: 'incremental'
   },
+  images: {
+    domains: ['images.pexels.com']
+  }
 };
 
 export default nextConfig;
