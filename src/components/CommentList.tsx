@@ -3,8 +3,8 @@ import PostInterActions from "./PostInterActions"
 const CommentList = () => {
   return (
     <div className="p-4">
-      <div className="flex items-start justify-center gap-4">
-      <Image src={''} alt="" width={40} height={40} className="w-10 h-10 rounded-full cursor-pointer"/> 
+      <div className="flex items-start justify-between gap-4">
+      <Image src={'https://images.pexels.com/photos/27295136/pexels-photo-27295136/free-photo-of-a-plant-in-a-white-room-with-a-window.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'} alt="" width={40} height={40} className="w-10 h-10 rounded-full cursor-pointer"/> 
 
         <div className="flex flex-col gap-2">
             <span>Ali Abdullah</span>

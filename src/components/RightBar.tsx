@@ -4,13 +4,14 @@ import Birthdays from './Birthdays'
 import Ads from './Ads'
 import UserInfoCard from './UserInfoCard'
 import UserMediaCard from './UserMediaCard'
+import { User } from '@prisma/client'
 
-const RightBar = ({userID}: {userID? : string}) => {
+const RightBar = ({user}: {user? : User}) => {
   return (
     <div className='flex flex-col gap-4'>
       {
-        userID && <>
-          <UserInfoCard userID=''/>
+        user && <>
+          <UserInfoCard user={user}/>
           <UserMediaCard userID=''/>
         </>
       }

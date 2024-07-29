@@ -5,7 +5,7 @@ const nextConfig = {
     ppr: 'incremental'
   },
   images: {
-    domains: ['images.pexels.com']
+    domains: ['images.pexels.com',"img.clerk.com"]
   }
 };
 
