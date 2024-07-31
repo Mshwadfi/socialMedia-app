@@ -11,7 +11,7 @@ const page = async({params}:{params : {id : string}}) => {
   console.log(params)
   const {id} = params;
   let isBlocked = false;
-  const user = await prisma.user.findFirst({
+  const visitedUserProfile = await prisma.user.findFirst({
     where:{
       clerkId:id,
     },
@@ -25,8 +25,8 @@ const page = async({params}:{params : {id : string}}) => {
       }
     }
   });
-  if(!user) return null;
-  const {_count,name,surname,avatar,cover} = user;
+  if(!visitedUserProfile) return null;
+  const {_count,name,surname,avatar,cover} = visitedUserProfile;
   const {userId: currentUserId} = auth();
   console.log(currentUserId , id,'comppppp');
   if(currentUserId ){
@@ -62,7 +62,7 @@ const page = async({params}:{params : {id : string}}) => {
         <Feed />
       </div>
       <div className="hidden lg:block w-[30%] p-4">
-        <RightBar user={user}/>
+        <RightBar visitedUserProfile={visitedUserProfile}/>
       </div>
     </div>
   )

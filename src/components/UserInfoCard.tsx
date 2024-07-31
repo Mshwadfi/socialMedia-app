@@ -1,9 +1,16 @@
+import prisma from "@/lib";
 import { auth } from "@clerk/nextjs/server";
 import { User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import UserInfoCardInteractions from "./UserInfoCardInteractions";
 
-const UserInfoCard = ({user} : {user? : User}) => {
+interface InteractionsProps {
+  isFollowing: boolean;
+  isFollowingSent: boolean;
+  isUserBlocked: boolean;
+}
+const UserInfoCard = async ({user} : {user? : User}) => {
 
   const userCreationDate = user?.createdAt.toLocaleDateString('en-Us',{
     year: 'numeric',
@@ -11,6 +18,38 @@ const UserInfoCard = ({user} : {user? : User}) => {
     day: '2-digit',
   })
 
+  let isUserBlocked = false;
+  let isFollowing = false;
+  let isFollowingSent = false;
+
+  const { userId: currentUserId } = auth();
+
+  if (currentUserId) {
+    const blockRes = await prisma.block.findFirst({
+      where: {
+        blockerClerkId: currentUserId,
+        blockedClerkId: user?.id,
+      },
+    });
+
+    blockRes ? (isUserBlocked = true) : (isUserBlocked = false);
+    const followRes = await prisma.follower.findFirst({
+      where: {
+        followerId: currentUserId,
+        followingId: user?.id,
+      },
+    });
+
+    followRes ? (isFollowing = true) : (isFollowing = false);
+    const followReqRes = await prisma.followRequest.findFirst({
+      where: {
+        senderId: currentUserId,
+        receiverId: user?.id,
+      },
+    });
+
+    followReqRes ? (isFollowingSent = true) : (isFollowingSent = false);
+  }
   return (
     <div className="p-4 bg-white rounded-lg shadow-md text-sm flex flex-col gap-4">
       {/* TOP */}
@@ -57,9 +96,15 @@ const UserInfoCard = ({user} : {user? : User}) => {
             <span>Joined {userCreationDate}</span>
           </div>
         </div>
-        <button className="bg-blue-500 p-2 rounded-md text-white">Follow</button>
-        <Link href={""} className="text-right bg text-red-500">Block</Link>
-      </div>
+        {currentUserId && currentUserId !== user?.id && (
+          <UserInfoCardInteractions
+            userId={user?.clerkId}
+            isUserBlocked={isUserBlocked}
+            isFollowing={isFollowing}
+            isFollowingSent={isFollowingSent}
+          />
+        )}
+        </div>
     </div>
   );
 };

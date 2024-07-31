@@ -6,12 +6,12 @@ import UserInfoCard from './UserInfoCard'
 import UserMediaCard from './UserMediaCard'
 import { User } from '@prisma/client'
 
-const RightBar = ({user}: {user? : User}) => {
+const RightBar = ({visitedUserProfile}: {visitedUserProfile? : User}) => {
   return (
     <div className='flex flex-col gap-4'>
       {
-        user && <>
-          <UserInfoCard user={user}/>
+        visitedUserProfile && <>
+          <UserInfoCard user={visitedUserProfile}/>
           <UserMediaCard userID=''/>
         </>
       }
