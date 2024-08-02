@@ -1,8 +1,12 @@
+import { fetchUserMedia } from '@/lib/actions'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const UserMediaCard = ({userID}: {userID? : string}) => {
+const UserMediaCard = async({userID}: {userID? : string}) => {
+    if(!userID) return null;
+    const userMedia = await fetchUserMedia(userID);
+    console.log(userID , 'id' , userMedia,'user Media');
   return (
     <div className='p-4 bg-white rounded-lg shadow-md text-sm flex flex-col gap-4'>
         <div className='flex justify-between items-center font-medium'>
@@ -11,27 +15,14 @@ const UserMediaCard = ({userID}: {userID? : string}) => {
         </div>
 
         <div className='flex justify-start gap-2 flex-wrap'>
-            <div className='relative w-[23.2%] h-28'>
-                <Image src={'https://images.pexels.com/photos/27269578/pexels-photo-27269578/free-photo-of-marti.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load'} alt='' fill className='object-cover rounded-md'/>
-            </div>
-            <div className='relative w-[23.2%] h-28'>
-                <Image src={'https://images.pexels.com/photos/27269578/pexels-photo-27269578/free-photo-of-marti.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load'} alt='' fill className='object-cover rounded-md'/>
-            </div>
-            <div className='relative w-[23.2%] h-28'>
-                <Image src={'https://images.pexels.com/photos/27269578/pexels-photo-27269578/free-photo-of-marti.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load'} alt='' fill className='object-cover rounded-md'/>
-            </div>
-            <div className='relative w-[23.2%] h-28'>
-                <Image src={'https://images.pexels.com/photos/27269578/pexels-photo-27269578/free-photo-of-marti.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load'} alt='' fill className='object-cover rounded-md'/>
-            </div>
-            <div className='relative w-[23.2%] h-28'>
-                <Image src={'https://images.pexels.com/photos/27269578/pexels-photo-27269578/free-photo-of-marti.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load'} alt='' fill className='object-cover rounded-md'/>
-            </div>
-            <div className='relative w-[23.2%] h-28'>
-                <Image src={'https://images.pexels.com/photos/27269578/pexels-photo-27269578/free-photo-of-marti.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load'} alt='' fill className='object-cover rounded-md'/>
-            </div>
-            <div className='relative w-[23.2%] h-28'>
-                <Image src={'https://images.pexels.com/photos/27269578/pexels-photo-27269578/free-photo-of-marti.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load'} alt='' fill className='object-cover rounded-md'/>
-            </div>
+            {
+                !userMedia?.length? "no media found" : 
+                userMedia.map(post => (
+                    <div className='relative w-[23.2%] h-28' key={post.id}>
+                        <Image src={post?.img!} alt='' fill className='object-cover rounded-md'/>
+                    </div>
+                ))
+            }
         </div>
       
     </div>

@@ -12,10 +12,10 @@ const RightBar = ({visitedUserProfile}: {visitedUserProfile? : User}) => {
       {
         visitedUserProfile && <>
           <UserInfoCard user={visitedUserProfile}/>
-          <UserMediaCard userID=''/>
+          <UserMediaCard userID={visitedUserProfile.clerkId}/>
         </>
       }
-      <FriendsRequests />
+      <FriendsRequests userId={visitedUserProfile?.clerkId!}/>
       <Birthdays />
       <Ads size='md'/>
     </div>

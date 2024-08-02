@@ -59,7 +59,7 @@ const page = async({params}:{params : {id : string}}) => {
             <span className="text-gray-500">{_count.followings} Following</span>
           </div>
         </div>
-        <Feed />
+        <Feed userId={id}/>
       </div>
       <div className="hidden lg:block w-[30%] p-4">
         <RightBar visitedUserProfile={visitedUserProfile}/>

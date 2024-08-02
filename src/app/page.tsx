@@ -3,8 +3,10 @@ import Feed from "@/components/Feed"
 import LeftBar from "@/components/LeftBar"
 import RightBar from "@/components/RightBar"
 import Stories from "@/components/Stories"
+import { auth } from "@clerk/nextjs/server"
 
 const Homepage = () => {
+  
   return (
     <div className='flex gap-5 bg-slate-100 p-3'>
       <div className="hidden xl:block w-[20%] p-4">

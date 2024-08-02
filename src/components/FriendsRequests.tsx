@@ -1,8 +1,14 @@
 import Link from 'next/link'
 import React from 'react'
 import SingleFriendRequest from './SingleFriendRequest'
+import { getUserFollowRequest } from '@/lib/actions'
+import { auth } from '@clerk/nextjs/server'
 
-const FriendsRequests = () => {
+const FriendsRequests = async({userId}:{userId: string}) => {
+
+  const{userId:currentUserId} = auth();  
+  const FollowRequests = await getUserFollowRequest(currentUserId!);
+  console.log(FollowRequests)
   return (
     <div className="p-4 bg-white rounded-lg shadow-md text-sm flex flex-col gap-4">
     {/* TOP */}
@@ -12,10 +18,13 @@ const FriendsRequests = () => {
         See all
       </Link>
     </div>
-    {/* USER */}
-    <SingleFriendRequest />
-    <SingleFriendRequest />
-    <SingleFriendRequest />
+    {
+      FollowRequests.length? 
+      FollowRequests.map(request =>(
+        <SingleFriendRequest {...request} key={request.id}/>
+      )):
+      'No Requests'
+    }
   </div>
   )
 }

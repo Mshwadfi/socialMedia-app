@@ -4,6 +4,7 @@ import { User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import UserInfoCardInteractions from "./UserInfoCardInteractions";
+import UpdateUser from "./UpdateUser";
 
 interface InteractionsProps {
   isFollowing: boolean;
@@ -23,7 +24,7 @@ const UserInfoCard = async ({user} : {user? : User}) => {
   let isFollowingSent = false;
 
   const { userId: currentUserId } = auth();
-
+  // console.log(currentUserId,user?.id,'bn')
   if (currentUserId) {
     const blockRes = await prisma.block.findFirst({
       where: {
@@ -50,14 +51,16 @@ const UserInfoCard = async ({user} : {user? : User}) => {
 
     followReqRes ? (isFollowingSent = true) : (isFollowingSent = false);
   }
+  console.log(currentUserId , user?.clerkId,'hhhh')
   return (
     <div className="p-4 bg-white rounded-lg shadow-md text-sm flex flex-col gap-4">
       {/* TOP */}
       <div className="flex justify-between items-center font-medium">
         <span className="text-gray-500">User Information</span>
-        <Link href="/" className="text-blue-500 text-xs">
+        {(user?.clerkId === currentUserId)? (<UpdateUser user={user} />)
+        :(<Link href="/" className="text-blue-500 text-xs">
           See all
-        </Link>
+        </Link>)}
       </div>
       {/* BOTTOM */}
       <div className="flex flex-col gap-4 text-gray-500">
@@ -96,7 +99,7 @@ const UserInfoCard = async ({user} : {user? : User}) => {
             <span>Joined {userCreationDate}</span>
           </div>
         </div>
-        {currentUserId && currentUserId !== user?.id && (
+        {currentUserId && currentUserId !== user?.clerkId && (
           <UserInfoCardInteractions
             userId={user?.clerkId}
             isUserBlocked={isUserBlocked}

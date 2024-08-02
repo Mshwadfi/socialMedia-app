@@ -1,6 +1,8 @@
 'use server'
 import { auth } from "@clerk/nextjs/server"
 import prisma from ".";
+import { object, z } from "zod";
+import { revalidatePath } from "next/cache";
 
 const AreWeFriends = async(currentUserId:string , visitedUserId:string)=>{
     const AmIFollower = await prisma.follower.findFirst({
@@ -46,6 +48,29 @@ const deleteFollowRequest = async(senderId:string , receiverId:string)=>{
     })
 }
 
+const isLiked = async(postId:string , userId:string)=>{
+    return await prisma.like.findFirst({
+        where: {
+          postId,
+          userId,
+        },
+      });
+}
+const deleteLike = async(postId:string) =>{
+    await prisma.like.delete({
+        where: {
+          id: postId,
+        },
+      });
+}
+const addLike = async(postId:string , userId:string)=>{
+    return await prisma.like.create({
+        data: {
+          postId,
+          userId,
+        },
+      });
+}
 const isUserBlocked = async(blockerId:string , blockedId:string)=>{
     return await prisma.block.findFirst({
         where:{
@@ -73,6 +98,64 @@ const blockUser = async(blockerId:string , blockedId:string)=>{
         }
     })
 }
+
+const fetchFollowRequest = async(senderId:string,receiverId:string)=>{
+    return await prisma.followRequest.findFirst({
+        where:{
+            senderId,
+            receiverId,
+        }
+    })
+}
+
+const addFollower = async(followerId:string,followingId:string)=>{
+    await prisma.follower.create({
+        data:{
+            followerId,
+            followingId,
+        }
+    })
+}
+export const rejectFollow = async(id:string)=>{
+    console.log('follow rejected')
+    await prisma.followRequest.delete({
+        where: {
+            id,
+          },
+    })
+}
+export const getUserFollowRequest = async(receiverId:string)=>{
+    return await prisma.followRequest.findMany({
+        where:{
+            receiverId,
+        },
+        include:{
+            sender: true,
+        }
+    })
+}
+export const acceptFollowRequest = async(senderId:string)=>{
+    console.log('follow accepted')
+    const {userId : currentUserId} = auth();
+    console.log(currentUserId , senderId)
+    const followRequest = await fetchFollowRequest(senderId,currentUserId!);
+    if(followRequest){
+        await rejectFollow(followRequest.id);
+        await addFollower(senderId,currentUserId!);
+    }
+}
+export const fetchUserMedia = async (visitedUserId:string) => {
+    return await prisma.post.findMany({
+      where: {
+        userId: visitedUserId,
+      },
+      select: {
+        img: true,
+        id: true,
+        desc: true,
+      },
+    });
+  }
 export const toggleFollowRequest = async(visitedUserId : string)=>{
     console.log('try follow')
     const {userId : currentUserId} = auth();
@@ -109,3 +192,64 @@ export const toggleBlock = async (visitedUserId : string)=>{
         console.log(error);
     }
 }
+
+export const updateProfile = async (prevState:{success:boolean,error:boolean},payload:{formData : FormData , cover:string}) => {
+    const {formData , cover} = payload;
+    const fields = Object.fromEntries(formData);
+  
+    const filteredFields = Object.fromEntries(
+      Object.entries(fields).filter(([_, value]) => value !== "")
+    );
+  
+    const Profile = z.object({
+      cover: z.string().optional(),
+      name: z.string().max(60).optional(),
+      surname: z.string().max(60).optional(),
+      description: z.string().max(255).optional(),
+      city: z.string().max(60).optional(),
+      school: z.string().max(60).optional(),
+      work: z.string().max(60).optional(),
+      website: z.string().max(60).optional(),
+    });
+  
+    const validatedFields = Profile.safeParse( {...filteredFields,cover} );
+  
+    if (!validatedFields.success) {
+      console.log(validatedFields.error.flatten().fieldErrors);
+      return { success: false, error: true };
+    }
+  
+    const { userId:currentUserId } = auth();
+  
+    if (!currentUserId) {
+      return { success: false, error: true };
+    }
+  
+    try {
+      const user = await prisma.user.update({
+        where: {
+          clerkId: currentUserId,
+        },
+        data: validatedFields.data,
+      });
+      revalidatePath(`/profile/${currentUserId}`)
+      console.log('updated', user,validatedFields)
+      return { success: true, error: false };
+    } catch (err) {
+      console.log(err);
+      return { success: false, error: true };
+    }
+  };
+  
+  export const AddOrRemoveLike = async(postId:string)=>{
+    const {userId:currentUserId} = auth();
+    if(!currentUserId) return null;
+
+    try {
+        const liked = await isLiked(postId , currentUserId);
+        if(liked) await deleteLike(liked.id);
+        else await addLike(postId,currentUserId);
+    } catch (error) {
+        console.log(error);
+    }
+  }
