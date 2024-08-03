@@ -70,7 +70,7 @@ const Feed = async({userId}:{userId? : string}) => {
   }
   console.log(posts,'userp')
   return (
-    <div>
+    <div className=' flex flex-col gap-4'>
       {
         posts.length? 
         posts.map(post =>(

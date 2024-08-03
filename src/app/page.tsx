@@ -1,4 +1,5 @@
 import AddPost from "@/components/AddPost"
+import CreatePost from "@/components/CreatePost"
 import Feed from "@/components/Feed"
 import LeftBar from "@/components/LeftBar"
 import RightBar from "@/components/RightBar"
@@ -14,7 +15,7 @@ const Homepage = () => {
       </div>
       <div className="w-full flex flex-col gap-5 lg:w-[70%] xl:w-[50%] p-4">
         <Stories />
-        <AddPost />
+        <CreatePost />
         <Feed />
       </div>
       <div className="hidden lg:block w-[30%] p-4">
