@@ -60,7 +60,7 @@ const CommentList = ({
       {user && (
         <div className="flex items-center gap-4">
           <Image
-            src={user.imageUrl || "noAvatar.png"}
+            src={user?.imageUrl || "noAvatar.png"}
             alt=""
             width={32}
             height={32}

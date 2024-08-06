@@ -12,6 +12,7 @@ const Comments = async ({postId}:{postId:string}) => {
       user:true
     }
   })
+  console.log(comments)
   return (
     <div className="">
       {/* WRITE */}

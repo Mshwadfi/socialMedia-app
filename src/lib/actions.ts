@@ -205,7 +205,7 @@ export const updateProfile = async (prevState:{success:boolean,error:boolean},pa
       cover: z.string().optional(),
       name: z.string().max(60).optional(),
       surname: z.string().max(60).optional(),
-      description: z.string().max(255).optional(),
+      description: z.string().max(300).optional(),
       city: z.string().max(60).optional(),
       school: z.string().max(60).optional(),
       work: z.string().max(60).optional(),
