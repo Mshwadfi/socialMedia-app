@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import prisma from ".";
 import { object, z } from "zod";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/dist/server/api-utils";
 
 const AreWeFriends = async(currentUserId:string , visitedUserId:string)=>{
     const AmIFollower = await prisma.follower.findFirst({
@@ -97,6 +98,7 @@ const blockUser = async(blockerId:string , blockedId:string)=>{
             blockedClerkId: blockedId,
         }
     })
+    
 }
 
 const fetchFollowRequest = async(senderId:string,receiverId:string)=>{
@@ -123,6 +125,7 @@ export const rejectFollow = async(id:string)=>{
             id,
           },
     })
+    revalidatePath('/');
 }
 export const getUserFollowRequest = async(receiverId:string)=>{
     return await prisma.followRequest.findMany({
@@ -142,7 +145,9 @@ export const acceptFollowRequest = async(senderId:string)=>{
     if(followRequest){
         await rejectFollow(followRequest.id);
         await addFollower(senderId,currentUserId!);
+        await addFollower(currentUserId!,senderId);
     }
+    revalidatePath('/');
 }
 export const fetchUserMedia = async (visitedUserId:string) => {
     return await prisma.post.findMany({
@@ -174,6 +179,7 @@ export const toggleFollowRequest = async(visitedUserId : string)=>{
             const checkExistingRequest = await isThereAfollowRequest(currentUserId,visitedUserId);
             checkExistingRequest? deleteFollowRequest(currentUserId , visitedUserId) : createFollowRequest(currentUserId,visitedUserId);
         }
+        revalidatePath('/')
         
     } catch (error) {
         console.log(error)
@@ -363,3 +369,32 @@ export const updateProfile = async (prevState:{success:boolean,error:boolean},pa
       console.log(err);
     }
   };
+  
+
+  export async function searchUsers(query:string) {
+    if (!query) {
+      return [];
+    }
+  
+    try {
+      const users = await prisma.user.findMany({
+        where: {
+          OR: [
+            { name: { contains: query, mode: 'insensitive' } },
+            { surname: { contains: query, mode: 'insensitive' } },
+          ],
+        },
+        select: {
+          clerkId: true,
+          name: true,
+          surname: true,
+          avatar: true,
+        },
+      });
+  
+      return users;
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      return [];
+    }
+  }

@@ -11,7 +11,6 @@ const PostInfo = ({ postId }: { postId: string }) => {
     event.preventDefault();
     try {
       await deletePost(postId);
-      // Add any additional logic you want after successful deletion
     } catch (error) {
       console.error("Failed to delete post:", error);
     }

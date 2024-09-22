@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     try {
       await prisma.user.update({
         where: {
-          id,
+          clerkId: id,
         },
         data: {
           avatar: JSON.parse(body).data.image_url || "https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvb2F1dGhfZ29vZ2xlL2ltZ18yanFrekJidUxKTEt5UWhHU1ZUVWJUR3NxVEwifQ",
